@@ -22,11 +22,14 @@ async function bubbleSort() {
     while(true) {
         let comp = 0;
         for(let x = 0; x < children.length-1; x++) {
+            selectedChild = children[x]
+            selectedChild.style.backgroundColor = "blue";
             if(parseInt(children[x].dataset.value) > parseInt(children[x+1].dataset.value)) {
                 swapTags(x, x+1)
                 await timer(1);
                 comp += 1
             }
+            selectedChild.style.backgroundColor = "red";
         }
         if(comp == 0) {
             break
@@ -37,23 +40,19 @@ async function bubbleSort() {
 }
 
 async function insertionSort() {
-    let holeposition, valueToInsert; 
-
-    for(let x = 1; x < children.length; x++) {
-        valueToInsert = parseInt(children[x].dataset.value)
-        holeposition = x
-
-        while(holeposition > 0 && parseInt(children[holeposition-1].dataset.value) > valueToInsert) {
-            console.log(children[holeposition].dataset.value, children[holeposition-1].dataset.value)
-            swapTags(holeposition, holeposition-1);
-            holeposition--;
+    let holeposition;
+    for(let selected = 1; selected < children.length; selected++) {
+        holeposition = selected;
+        selectedChild = children[selected]
+        selectedChild.style.backgroundColor = "blue";
+        while(holeposition > 0 && parseInt(selectedChild.dataset.value) < parseInt(children[holeposition-1].dataset.value)) {
+            swapTags(holeposition, holeposition-1)
+            await timer(10);
+            holeposition--
         }
-        printOutDisplay();
-        console.log("This is the holeposition:", holeposition);
-        console.log()
-        swapTags(holeposition, valueToInsert)
-        await timer(1);
+        selectedChild.style.backgroundColor = "red";
     }
+    victoryLap();
 }
 
 async function victoryLap() {
@@ -90,8 +89,8 @@ async function shuffleArray() {
     }
 }
 
-function drawGraphics(size) {
-    let list = [...Array(size).keys()];
+function drawGraphics() {
+    let list = [...Array(parseInt(document.forms['values']["size"].value)).keys()];
     document.getElementById("graph").innerHTML = "";
     for(let x = 0; x < list.length; x++) {
         document.getElementById("graph").append(bar(list[x], (list[x]+1)*5));
@@ -109,4 +108,6 @@ function bar(value, height) {
     return newDiv;
 }
 
-drawGraphics(10)
+document.getElementById("quantity").addEventListener("input", drawGraphics);
+
+drawGraphics();
