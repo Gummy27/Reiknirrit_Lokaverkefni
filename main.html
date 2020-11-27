@@ -9,12 +9,14 @@
 </head>
 <body>
     <form name="values" onkeydown="return event.key != 'Enter';">
-        <input type="number" id="quantity" name="size" value="100" min="1" max="1000" style="width: 50px">
-        <input type="number" id="sizeOfArr" name="arrSize" value="5" min="1" max="80" style="width: 40px" step="0.5 ">
+        <p>Fjöldi:</p>
+        <input type="number" id="quantity" name="size" value="100" min="0" max="1000" style="width: 50px" step="10">
+        <p>Stærð:</p>
+        <input type="number" id="sizeOfArr" name="arrSize" value="7" min="0" max="80" style="width: 40px" step="0.5">
         <button type="button" onclick="bubbleSort()">Bubble Sort</button>
         <button type="button" onclick="insertionSort()">Insertion Sort</button>
         <button type="button" onclick="quickSort()">Quick Sort</button>
-        <button type="button" onclick="radixSort()">Bubble Sort</button>
+        <button type="button" onclick="radixSort()">Radix Sort</button>
         <button type="button" onclick="running = false">Stop</button>
         <button type="button" onclick="shuffleArray()">Stokka</button>
     </form>
