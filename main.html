@@ -15,10 +15,15 @@
         <input type="number" id="sizeOfArr" name="arrSize" value="7" min="0" max="80" style="width: 40px" step="0.5">
         <button type="button" onclick="bubbleSort()">Bubble Sort</button>
         <button type="button" onclick="insertionSort()">Insertion Sort</button>
-        <button type="button" onclick="quickSort()">Quick Sort</button>
+        <button type="button" onclick="executeQuickSort()">Quick Sort</button>
         <button type="button" onclick="radixSort()">Radix Sort</button>
+        <button type="button" onclick="mergeSort()">Merge Sort</button>
         <button type="button" onclick="running = false">Stop</button>
         <button type="button" onclick="shuffleArray()">Stokka</button>
+        <button type="button" onclick="reverseArray()">Umsnúa</button>
+
+        <p id="count_comparisons">Samanburður: 0</p>
+        <p id="count_array_access">Aðgangur að lista: 0</p>
     </form>
     <div id="graph">
     </div>
