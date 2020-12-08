@@ -6,6 +6,7 @@ let mainColour = "red";
 let activeColour = "blue";
 let victoryColour = "#43cc1a";
 
+// Þessi litli kóði er það sem stoppar forritið í smá stund.
 const timer = ms => new Promise(res => setTimeout(res, ms))
 
 /*
@@ -14,68 +15,114 @@ const timer = ms => new Promise(res => setTimeout(res, ms))
     tveimur stökum.
 */
 async function swapTags(lower, higher) {
+    // Stökin fá á sig virkan lit þar sem verið er að skipta þeim.
     children[lower].style.backgroundColor = activeColour;
     children[higher].style.backgroundColor = activeColour;
 
+    // Þar sem ég þarf að nota insert before fallið þá þarf ég að vita hvor breytan hafi lægra eða hærra indexið. 
+    // Þess vegna þarf ég að tjékka á því með þessari if setningu.
     if(lower > higher) {
         [lower, higher] = [higher, lower];
     }
 
+    // Fyrst er gáð hvort að stökin er við hliðina á hvort öðru. Ef svo þá get ég bara fær hærra stakið fyrir aftan lægra.
     if(higher - lower == 1) {
         sortVisual.insertBefore(children[higher], children[lower])
     } else {
+        // Þessi breyta tekur inn stakið sem er fyrir framan lægra stakið.
         let temp = children[lower+1]
+
+        // Fyrst set ég lægra stakið fyrir aftan hærra stakið.
         sortVisual.insertBefore(children[lower], children[higher])
+
+        // Síðan er hærra stakið sett fyrir aftan stakið sem var fyrir framan lægra stakið.
         sortVisual.insertBefore(children[higher], temp)
     }
 
+    // Hérna bíður forritið aðeins svo notandinn getur séð hvað hefur gerst.
     await timer(1);
 
     children[lower].style.backgroundColor = mainColour;
     children[higher].style.backgroundColor = mainColour;
 }
 
+// Þetta fall heldur utan um samanburðar teljarann. Ef að þú vilt núllstilla hann kallar þú á það með true sem breytu.
 function comparisonsCounter(reset=false) {
+    // Teljara tagið er tekið inn.
     let counter = document.getElementById("count_comparisons");
+    // Textcontent er splittað til að búa til nýja textann.
     let text = counter.textContent.split(" ");
 
+    // Gáð er hvort að teljarinn eigi að núllstillast.
     if(reset) {
+        // Teljarinn er núllstilltur.
         text[1] = 0;
     } else {
+        // Teljarinn fær á sig nýju töluna.
         text[1] = parseInt(text[1]) + 1;
     }
+    // Nýji textinn er loks hent inn á síðuna.
     counter.textContent = text[0] + " " + text[1];
 }
 
+// Þetta fall heldur utan um lista teljarann. Hægt er að ráða um hve mikið teljarinn á að hækka.
 function arrayAccessCounter(reset=false, amount=1) {
+    // Teljara tagið er tekið inn.
     let counter = document.getElementById("count_array_access");
+    // Textcontent er splittað til að búa til nýja textann.
     let text = counter.textContent.split(" ");
 
+    // Gáð er hvort að teljarinn eigi að núllstillast.
     if(reset) {
+        // Teljarinn er núllstilltur
         text[3] = 0
     } else {
+        // Teljarinn fær á sig nýju töluna.
         text[3] = parseInt(text[3]) + amount;
     }
+    // Nýji textinn er loks hent inn á síðuna.
     counter.textContent = text[0] + " " + text[1] + " " + text[2] + " " + text[3];
 }
 
+// Þetta fall heldur utan um tíma teljarann. Fallið tekur inn annað fall sem það keyrir og tímamælir.
 async function funcTimer(func) {
+    // Teljara tagið er tekið inn.
     let counter = document.getElementById("count_timer");
+    // Textcontent er splittað til að búa til nýja textann.
     let text = counter.textContent.split(" ");
 
-    text[1] =  "tbd";
+    // Fyrst sýnir teljarinn tbd (To be determined) á meðan að forritið er mælt.
+    text[1] =  "Tbd";
     counter.textContent = text[0] + " " + text[1];
 
+    // Byrjunartíminn er skilgreindur.
     start = performance.now()
-    await func();
+    await func();   // Fallið er keyrt.
 
+    // Sekúndurnar eru reiknaðar.
     text[1] = (performance.now() - start) / 1000;
     counter.textContent = text[0] + " " + text[1] + " sek.";
 }
 
+/*
+
+    Síðan koma hérna öll röðunaralgríminn. 
+
+    Ætla fyrst að fara yfir lykilatriði fallanna. 
+    
+    Þau hefjast öll á if running aðgerð. Þetta er gert til að tjékka á hvort einhvert annað fall sé að keyrast.
+    Næst er samanburðar og lista teljararnir núllstilltir með comparisonsCounter(true) og arrayAccessCounter(true).
+    running er sett í true til marks um að forritið er að keyra.
+    Síðan í gegnum forritið eru if setningar sem gá hvort að notandi vilji stoppa algrímið.
+
+    Í endann er gáð hvort að forritið hafi keyrt alla leið í gegn. Ef svo er þá gerir forritið victory lap.
+    Og að lokum er running sett í false svo önnur algrím geta keyrt.
+
+*/
+
 // Bubble sort
-async function bubbleSort(timing=false) {
-    if(!running && !timing) {
+async function bubbleSort() {
+    if(!running) {
         comparisonsCounter(true);
         arrayAccessCounter(true);
         running = true
@@ -100,7 +147,7 @@ async function bubbleSort(timing=false) {
                 break
             }
         }
-        if(running && !timing) {
+        if(running) {
             victoryLap();
         }
         running = false
@@ -148,9 +195,7 @@ async function executeQuickSort() {
             await victoryLap();
         }
         running = false;
-    } else {
-        console.log("No!");
-    }
+    } 
 }
 
 async function quickSort(low=0, high=children.length-1) {
@@ -178,9 +223,8 @@ async function partition(low, high) {
         if(parseInt(children[j].dataset.value) < parseInt(pivot.dataset.value)) {
             arrayAccessCounter();
             comparisonsCounter();
-            await timer(1);
             i++
-            swapTags(i, j)
+            await swapTags(i, j)
         }
     }
 
@@ -262,26 +306,34 @@ function findByValue(value) {
 }
 
 /*
-    Hérna koma önnur föll
+    Grafísk föll
 */
+
+// Þetta fall keyrir victorylap þar sem græn strípa fer eftir súlunum til að sýna að listinn er fullraðaður.
 async function victoryLap() {
+    // Farið er í gegnum öll stökin.
     for(let x = 1; x < children.length-1; x++) {
+        // Þrjú stök eru sett í victoryColour.
         children[x-1].style.backgroundColor = victoryColour;
         children[x].style.backgroundColor = victoryColour;
         children[x+1].style.backgroundColor = victoryColour;
 
+        // Síðan er smá timeout skilgreint sem segir hvenær stakið eigi að taka aftur sinn upprunalega lit.
         setTimeout(function() {
             children[x-1].style.backgroundColor = mainColour;
         }, 500);
+        // Fallið er aðeins stoppað.
         await timer(1);
     }
+
+    // Síðustu tvö stökin fá loks á sig upprunalega litinn.
     setTimeout(function() {
         children[children.length-2].style.backgroundColor = mainColour;
         children[children.length-1].style.backgroundColor = mainColour;
     }, 500);
 }
 
-
+// Þetta fall prentar út gildi allra tagann. Aðeins notað í debug. Hef þetta hérna ef að þú vilt prófa eitthvað.
 function printOutDisplay() {
     let listi = []
     for(let x = 0; x < children.length; x++) {
@@ -290,44 +342,78 @@ function printOutDisplay() {
     console.log(listi)
 }
 
+// Þetta fall stokkar listann.
 async function shuffleArray() {
     if(!running) {
-        for (var i = children.length - 1; i > 0; i--) {
+        running = true;
+
+        // Farið er í gegnum öll stökin.
+        for (let i = children.length - 1; i > 0; i--) {
+            if(!running) {
+                break;
+            }
+
+            // Index er búið til með random generator.
             var j = Math.floor(Math.random() * (i + 1));
-    
-            swapTags(i, j);
-            await timer(1);
+            
+            // Stökunum er skipt.
+            await swapTags(i, j);
         }
     }
+    running = false;
 }
 
+// Þetta fall snýr listanum við. Getur þannig gert öfugan lista til að sjá versta tilvik röðunaralgríms.
 async function reverseArray() {
     if(!running) {
         for(let i = 0; i < Math.floor(children.length / 2); i++) {
-            console.log("This is the", i, children.length-1-i);
             await swapTags(i, children.length-1-i);
         }
     }
 }
 
+// Þetta fall teiknar súlurnar.
 function drawGraphics() {
+    // Running er sett í false til að stoppa öll algrím. 
+    running = false;
+
+    // Fyrst er listi búinn til sem að hefur tölur frá 0 til size. 
     let list = [...Array(parseInt(document.forms['values']["size"].value)).keys()];
-    document.getElementById("graph").innerHTML = "";
+
+    // Graphið er endurræst.
+    document.getElementById("graph").innerHTML = ""; 
+
     for(let x = 0; x < list.length; x++) {
-        document.getElementById("graph").append(bar(list[x], (list[x]+1)*parseFloat(document.forms['values']["arrSize"].value)));
+        // Nýtt tag er búið í bar template fallinu og appendað.
+        document.getElementById("graph").append(
+            bar(list[x], (list[x]+1)*parseFloat(document.forms['values']["arrSize"].value))
+        );
     }
 }
 
+// Þetta fall er einskonar template sem skilar fullkláruðu div tagi. 
 function bar(value, height) {
+    // Nýtt div tag er búið til.
     let newDiv = document.createElement("div");
 
+    // Hæð divisins er skilgreint. Hæðin er reiknuð þegar forritið er kallað. Hæðin er í samræmi við gildi divsins.
     newDiv.style.height = height + "px";
+
+    // Breidd divsins er skilgreint. Gildi arr size er tekið inn sem breidd.
     newDiv.style.width = parseFloat(document.forms['values']["arrSize"].value) + "px";
+
+    // Divið fær á sig nýjan lit.
     newDiv.style.backgroundColor = mainColour;
+
+    // Smá margin er bætt við svo að súlurnar hangi ekki af ofan. 
     newDiv.style.marginTop = (window.innerHeight - 40 - height) + "px";
+
+    // Til að gera súlurnar aðeins fallegri ákvað ég að hafa smá bil á milli þeirra. 
+    // Þetta er flott þar til að stærðin er kominn fyrir neðan 5.
     if(document.forms['values']["arrSize"].value > 5) {
         newDiv.style.marginRight = "1px";
     }
+    // Divið fær á sig nýtt attribute sem er gildi divsins.
     newDiv.setAttribute("data-value", value)
 
     return newDiv;
