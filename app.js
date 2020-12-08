@@ -8,7 +8,14 @@ let victoryColour = "#43cc1a";
 
 const timer = ms => new Promise(res => setTimeout(res, ms))
 
+/*
+    Þett fall tekur inn tvö index og skiptir þeim. Þurfti að gera heilt fall
+    fyrir þetta því dom er frekar leiðinlegt þegar kemur að því að skipta
+    tveimur stökum.
+*/
 async function swapTags(lower, higher) {
+    children[lower].style.backgroundColor = activeColour;
+    children[higher].style.backgroundColor = activeColour;
 
     if(lower > higher) {
         [lower, higher] = [higher, lower];
@@ -21,9 +28,6 @@ async function swapTags(lower, higher) {
         sortVisual.insertBefore(children[lower], children[higher])
         sortVisual.insertBefore(children[higher], temp)
     }
-
-    children[lower].style.backgroundColor = activeColour;
-    children[higher].style.backgroundColor = activeColour;
 
     await timer(1);
 
@@ -55,12 +59,27 @@ function arrayAccessCounter(reset=false, amount=1) {
     counter.textContent = text[0] + " " + text[1] + " " + text[2] + " " + text[3];
 }
 
+async function funcTimer(func) {
+    let counter = document.getElementById("count_timer");
+    let text = counter.textContent.split(" ");
+
+    text[1] = 0 + " sek.";
+    counter.textContent = text[0] + " " + text[1];
+
+    start = performance.now()
+    await func();
+
+    text[1] = (performance.now() - start) / 1000;
+    counter.textContent = text[0] + " " + text[1] + " sek.";
+}
+
 // Bubble sort
-async function bubbleSort() {
-    if(!running) {
+async function bubbleSort(timing=false) {
+    if(!running && !timing) {
         comparisonsCounter(true);
         arrayAccessCounter(true);
         running = true
+
         while(true && running) {
             let comp = 0;
             for(let x = 0; x < children.length-1; x++) {
@@ -69,9 +88,10 @@ async function bubbleSort() {
                 } 
 
                 selectedChild = children[x]
-                if(parseInt(children[x].dataset.value) > parseInt(children[x+1].dataset.value)) {
+                if(parseInt(children[x].dataset.value) > parseInt(children[x+1].dataset.value) && !timing) {
                     comparisonsCounter();
                     arrayAccessCounter(false, 2);
+
                     await swapTags(x, x+1)
                     comp += 1
                 }
@@ -80,12 +100,11 @@ async function bubbleSort() {
                 break
             }
         }
-        if(running) {
+        if(running && !timing) {
             victoryLap();
         }
         running = false
     }
-
 }
 
 // Insertion sort
@@ -139,7 +158,6 @@ async function quickSort(low=0, high=children.length-1) {
         return;
     }
     if(low < high) {
-        comparisonsCounter();
         pi = await partition(low, high)
         await quickSort(low, pi-1)
         await quickSort(pi+1, high)
@@ -165,6 +183,7 @@ async function partition(low, high) {
             swapTags(i, j)
         }
     }
+
     await swapTags(i+1, high)
     pivot.style.backgroundColor = mainColour;
     return i + 1;
@@ -203,7 +222,6 @@ async function countingSort(place) {
         index = (children[i].dataset.value / place)
         arrayAccessCounter();
         count[Math.floor(index % 10)]++;
-        console.log("This is the count:", count, index % 10);
         await timer(1);
 
         children[i].style.backgroundColor = mainColour;
@@ -243,86 +261,8 @@ function findByValue(value) {
     }
 }
 
-// Merge sort
 /*
-class splitChildren {
-    constructor(index1, index2) { 
-        this.index1 = index1
-        this.index2 = index2
-
-        this.length = index2 - index1;
-        this.mid = Math.floor(this.length / 2) + index1;
-    }
-
-    printList() {
-        let list = []
-        for(let i = this.index1; i < this.index2; i++) {
-            list.push(children[i].dataset.value)
-        }
-        console.log(list, this.length)
-    }
-
-    list(index) {
-        return children[this.index1 + index].dataset.value;
-    }
-}
-
-function mergeSort(arr=new splitChildren(0, 10)) {
-    if(arr.length > 1) {
-        let L = new splitChildren(arr.index1, arr.mid);
-        let R = new splitChildren(arr.mid, arr.index2);
-
-        mergeSort(L);
-        mergeSort(R);
-
-        i = j = k = 0;
-
-        while(i < L.length && j < R.length) {
-            if(L.list(i) < R.list(j)) {
-                swapTags(findByValue(arr.list(k)), findByValue(L.list(i)));
-                console.log(arr.list(k), L.list(i));
-                i++;
-            } else {
-                swapTags(findByValue(arr.list(k)), findByValue(R.list(j)));
-                console.log(arr.list(k), R.list(j));
-                j++;
-            }
-            k++;
-        }
-
-        while(i < L.length) {
-            swapTags(findByValue(arr.list(k)), findByValue(L.list(i)));
-            i++;
-            k++;
-        }
-
-        while(j < R.length) {
-            swapTags(findByValue(arr.list(k)), findByValue(R.list(j)));
-            j++;
-            k++;
-        }
-    }
-} 
-
-function mergePrintOut(index1, index2, mid=" ") {
-    list = []
-    for(let i = index1; i < index2; i++) {
-        list.push(children[i].dataset.value)
-    }
-    console.log(list, mid);
-}
-
-function liveNodeToList(index1, index2) {
-    list = []
-    for(let i = index1; i < index2; i++) {
-        list.push(parseInt(children[i].dataset.value))
-    }
-    return list
-}
-*/
-/*
-
-Hérna koma önnur föll
+    Hérna koma önnur föll
 */
 async function victoryLap() {
     for(let x = 1; x < children.length-1; x++) {

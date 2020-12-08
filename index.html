@@ -13,17 +13,17 @@
         <input type="number" id="quantity" name="size" value="100" min="0" max="1000" style="width: 50px" step="10">
         <p>Stærð:</p>
         <input type="number" id="sizeOfArr" name="arrSize" value="7" min="0" max="80" style="width: 40px" step="0.5">
-        <button type="button" onclick="bubbleSort()">Bubble Sort</button>
-        <button type="button" onclick="insertionSort()">Insertion Sort</button>
-        <button type="button" onclick="executeQuickSort()">Quick Sort</button>
-        <button type="button" onclick="radixSort()">Radix Sort</button>
-        <button type="button" onclick="mergeSort()">Merge Sort</button>
-        <button type="button" onclick="running = false">Stop</button>
+        <button type="button" onclick="funcTimer(bubbleSort)">Bubble Sort</button>
+        <button type="button" onclick="funcTimer(insertionSort)">Insertion Sort</button>
+        <button type="button" onclick="funcTimer(executeQuickSort)">Quick Sort</button>
+        <button type="button" onclick="funcTimer(radixSort)">Radix Sort</button>
+        <button type="button" onclick="running = false">Stopp</button>
         <button type="button" onclick="shuffleArray()">Stokka</button>
         <button type="button" onclick="reverseArray()">Umsnúa</button>
 
         <p id="count_comparisons">Samanburður: 0</p>
         <p id="count_array_access">Aðgangur að lista: 0</p>
+        <p id="count_timer">Tími: 0 sek.</p>
     </form>
     <div id="graph">
     </div>
