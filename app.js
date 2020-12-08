@@ -63,7 +63,7 @@ async function funcTimer(func) {
     let counter = document.getElementById("count_timer");
     let text = counter.textContent.split(" ");
 
-    text[1] = 0 + " sek.";
+    text[1] =  "tbd";
     counter.textContent = text[0] + " " + text[1];
 
     start = performance.now()
